@@ -1,6 +1,6 @@
-# Basic Functional Programs
+# Testing1233
 
-A small Python learning project with examples for working with test-run data:
+A small Python learning project with test scripts for working with test-run data:
 
 - Find the slowest and fastest test.
 - Group test names by status, including invalid statuses.
