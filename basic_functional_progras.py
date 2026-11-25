@@ -7,17 +7,27 @@ Original file is located at
     https://colab.research.google.com/drive/1WjUSx9IMo62QE7qVuwsncA2u-YocTJtx
 """
 
-#Iteration through dictionary
-
-
-test_runs = [
+# Sample data used when the script is run directly.
+TIMED_TEST_RUNS = [
     {"name": "login", "status": "PASS", "duration": 1.2},
     {"name": "search", "status": "FAIL", "duration": 2.5},
     {"name": "checkout", "status": "PASS", "duration": 3.1},
     {"name": "profile", "status": "SKIP", "duration": 0.8},
-    {"name": "logout", "status": "PASS", "duration": 1.5}
+    {"name": "logout", "status": "PASS", "duration": 1.5},
 ]
 
+STATUS_TEST_RUNS = [
+    {"name": "login", "status": "PASS"},
+    {"name": "search", "status": "FAIL"},
+    {"name": "checkout", "status": "PASS"},
+    {"name": "profile", "status": "SKIP"},
+    {"name": "logout", "status": "FAIL"},
+    {"name": "payment", "status": " pass "},
+    {"name": "registration", "status": "BROKEN"},
+]
+
+
+# Iteration through dictionary
 def find_slowest_test(test_runs):
     slowest_test = None
 
@@ -28,25 +38,7 @@ def find_slowest_test(test_runs):
     return slowest_test
 
 
-result = find_slowest_test(test_runs)
-
-if result is not None:
-    print("Slowest test:", result["name"])
-    print("Status:", result["status"])
-    print("Duration:", result["duration"], "seconds")
-else:
-    print("No tests available")
-
-#fastest test
-
-test_runs = [
-    {"name": "login", "status": "PASS", "duration": 1.2},
-    {"name": "search", "status": "FAIL", "duration": 2.5},
-    {"name": "checkout", "status": "PASS", "duration": 3.1},
-    {"name": "profile", "status": "SKIP", "duration": 0.8},
-    {"name": "logout", "status": "PASS", "duration": 1.5}
-]
-
+# Fastest test
 def find_fastest_test(test_runs):
     fastest_test = None
 
@@ -56,25 +48,8 @@ def find_fastest_test(test_runs):
 
     return fastest_test
 
-result = find_fastest_test(test_runs)
-if result is not None:
-    print("Fastest test:", result["name"])
-    print("Status:", result["status"])
-    print("Duration:", result["duration"], "seconds")
-else:
-    print("No tests available")
 
-#Dictionary with lists
-test_runs = [
-    {"name": "login", "status": "PASS"},
-    {"name": "search", "status": "FAIL"},
-    {"name": "checkout", "status": "PASS"},
-    {"name": "profile", "status": "SKIP"},
-    {"name": "logout", "status": "FAIL"},
-    {"name": "payment", "status": " pass "},
-    {"name": "registration", "status": "BROKEN"}
-]
-
+# Dictionary with lists
 def group_test_results(test_runs):
     grouped = {
         "PASS": [],
@@ -84,8 +59,7 @@ def group_test_results(test_runs):
     }
     for test in test_runs:
         test_name = test["name"]
-        status = test["status"]
-        result = status.strip().upper()
+        result = test["status"].strip().upper()
 
         if result == "PASS":
             grouped["PASS"].append(test_name)
@@ -98,16 +72,40 @@ def group_test_results(test_runs):
 
     return grouped
 
-print(group_test_results(test_runs))
 
-a = int(input("Total number of tests: "))
-b = int(input("Total tests passed: "))
-c = a-b
-if (a>0) and (b>=0) and (b<=a):
-  d = (b/a)*100
-  print("Your total tests ",a)
-  print("Total tests passed ",b)
-  print("Total tests failed ",c)
-  print("Percentage of tests passed ",d)
-else:
-    print("Invalid input")
+# Pass percentage
+def calculate_pass_percentage(total, passed):
+    """Return the passed-test percentage, or None if the counts are invalid."""
+    if total > 0 and 0 <= passed <= total:
+        return (passed / total) * 100
+    return None
+
+
+def print_test(label, test):
+    if test is not None:
+        print(label, test["name"])
+        print("Status:", test["status"])
+        print("Duration:", test["duration"], "seconds")
+    else:
+        print("No tests available")
+
+
+def main():
+    print_test("Slowest test:", find_slowest_test(TIMED_TEST_RUNS))
+    print_test("Fastest test:", find_fastest_test(TIMED_TEST_RUNS))
+    print(group_test_results(STATUS_TEST_RUNS))
+
+    a = int(input("Total number of tests: "))
+    b = int(input("Total tests passed: "))
+    d = calculate_pass_percentage(a, b)
+    if d is not None:
+        print("Your total tests ", a)
+        print("Total tests passed ", b)
+        print("Total tests failed ", a - b)
+        print("Percentage of tests passed ", d)
+    else:
+        print("Invalid input")
+
+
+if __name__ == "__main__":
+    main()
